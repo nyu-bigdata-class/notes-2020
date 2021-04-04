@@ -28,7 +28,7 @@ There are three key components in Bastion:
 2. Network visibility service: Provide fine-grained control over different network topology visibility per container application.
 3. Traffic visibility service: Securely isolate inter-container communication in a point-to-point manner and prevent the exposure of inter-container network traffic to other peer containers.
 
-![Bastion overview](/images/bastion_overview.png)
+![Bastion overview](images/bastion_overview.png)
 
 ### Manager
 1. Container Collection:
@@ -36,7 +36,7 @@ The manager maintains two hash maps for network and inter-container dependency. 
 2. Security Stack Management:
 It installs the network stacks at their interfaces for new containers. The maps of security stack is updated in run time.
 
-![security_stack](/images/security_stack.png)
+![security_stack](images/security_stack.png)
 
 ### Network Visibility Service
 
@@ -44,7 +44,7 @@ The network visibility service restricts unnecessary connectivity among containe
 1. Direct ARP handler:
 BASTION’s direct ARP handler filters out any unnecessary container discovery that does not pertain to the present container’s dependency map. When a container sends an ARP request, the handler intercepts the request before it is broadcasted, verifying if the source container has a dependency on the destination container.
 
-![arp handler](/images/arp.png)
+![arp handler](images/arp.png)
 
 2. Inter-container Communications Handler:
 It implements containeer-aware network isolation to address malicious access among dependent containers.
