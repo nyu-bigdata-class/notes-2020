@@ -3,10 +3,10 @@ title: "Communication: Applications and Privacy"
 author: Yafu Ruan <yr942@nyu.edu>
 ---
 # Introduction
-Present an overview of the problem and the approaches.
+Those are brief introductions for this week's papers:
 1. BASTION is designed to secure contain network through an intelligent contain-aware communication sandbox.
-2. 
-3.
+2. FaRM is a new main memory distributed computing platform that exploits RDMA to improve both latency and throughput by an order of magnitude relative to state of the art main memory systems that use TCP/IP.
+3. Mostly-Ordered Multicast (MOM) is a network-level mechanisms: a best-effort ordering property for concurrent multicast operations.
 
 # BASTION
 ## Motivation
@@ -64,7 +64,12 @@ The traffic visibility service provides point-to-point integrity and confidentia
 
 # FaRM
 ## Motivation
+1. The price of hardware is getting cheaper. The decreasing price of DRAM make servers with hundreds of gigabytes of DRAM possible.
+2. RDMA provides reliable user-level reads and writes of remote memory, but has not seen widespread use in data center bacause Infiniband has traditionally been expensive and not compatible with Ethernet. Now RoCE supports RDMA over Ethernet wieht data center bridging at low prices.
+
+
 ## Approaches
+
 ## Trade-Offs
 ## Open Questions and Future Work
 
@@ -72,7 +77,28 @@ The traffic visibility service provides point-to-point integrity and confidentia
 
 # Mostly-ordered multicast
 ## Motivation
+Most of the distributed systems are designed independently from the network. It is suitable for Internet, since it is unpredictable. But lots of today's applications are distributed systems that deployed in data centers, and there are several properties different from Internet:
+1. Data center networks are more predictable.
+2. Data center networks are more reliable.
+3. Data center networks are more extensible.
+So not it is possible to co-design the distributed system and the network. To tream the data center as an approximation of synchronous network, two mechanisms are introduced to lebverage approximate synchrony: Mostly-Ordered Multicast and the Speculative Paxos replication protocol.
+
+Mostly-Ordered Multicast primitive (MOM) provides a best-effort guarantee that all receivers will receive messages from different senders in a consistent order.
+Building on this MOM primitive is Speculative Paxos, a new protocol for state machine replication designed for an environment where reordering is rare.
+
 ## Approaches
+The traditional totaolly-ordered multicast provides the following property: if ni ∈ N processes a multicast message m followed by another multicast message m', then any other node nj ∈ N that receives m' must process m before m'.
+
+Instead here a relaxed version is introduced: mostly-ordered multicast property is if the above ordering constraint is satisfied with high frequency. This permits occasional ordering violations: these occur if ni processes m followed by m' and either (1) nj processes m after m, or (2) nj does not
+process m at all (because the message is lost). As a result, MOMs can be implemented as a best-effort network primitive.
+
+## Design options
+1. Topology-aware multicast: Ensure that all multicast messages traverse the same number of links. This eliminates reordering due to path dilation
+2. High-priority multicast: Use topology-aware multicast, but also assign high QoS priorities to multicasts. This essentially eliminates drops due to congestion, and also reduces reordering due to queuing delays.
+3. In-network serialization: Use high-priority multicast, but route all packets through a single root switch. This eliminates all remaining non-failure related reordering.
+
+The common intuition behind all of our designs is that messages can be sent along predictable paths through the data center network topology with low latency and high reliability in the common case.
+
 ## Trade-Offs
 ## Open Questions and Future Work
 
@@ -87,7 +113,8 @@ The traffic visibility service provides point-to-point integrity and confidentia
 # References:
 1. https://cs.nyu.edu/~apanda/classes/sp21/papers/bastion.pdf
 2. https://www.usenix.org/system/files/atc20-paper166-slides-nam.pdf
-3. 
+3. https://www.usenix.org/conference/nsdi14/technical-sessions/dragojevi%C4%87
+
 
 # Motivation
 What is the problem that the papers are looking at, and why are they looking at
