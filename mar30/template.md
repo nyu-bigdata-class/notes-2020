@@ -60,7 +60,13 @@ The traffic visibility service provides point-to-point integrity and confidentia
 
 
 ## Trade-Offs
+
+- BASTION can effectively mitigate several adversarial attacks in container networks while improving the overall performance.
+- It could only be applied to container network.
+
 ## Open Questions and Future Work
+
+
 
 # FaRM
 ## Motivation
@@ -80,7 +86,14 @@ FaRM is built on RDMA and it improves both latency and throughput.
 
 
 ## Trade-Offs
+
+- It proposes a more efficient way of building distributed memory systems, which achieves an order of magnitude better throughput and latency than a similar system built on top of TCP/IP on the same physical network.
+- There is a need to modify or rewrite the application since TCP/IP is no longer used and is replaced by FaRM API.
+- Datacenter infrastructure need to be changed like adding NIC on each server.
+
 ## Open Questions and Future Work
+
+It would be better if the current TCP/IP could be still used which means there is no need to write the application.
 
 
 
@@ -91,7 +104,7 @@ Most of the distributed systems are designed independently from the network. It 
 2. Data center networks are more reliable.
 3. Data center networks are more extensible.
 
-So not it is possible to co-design the distributed system and the network. To treaT the data center as an approximation of synchronous network, two mechanisms are introduced to lebverage approximate synchrony: Mostly-Ordered Multicast and the Speculative Paxos replication protocol.
+So now it is possible to co-design the distributed system and the network. To treat the data center as an approximation of synchronous network, two mechanisms are introduced: Mostly-Ordered Multicast and the Speculative Paxos replication protocol.
 
 Mostly-Ordered Multicast primitive (MOM) provides a best-effort guarantee that all receivers will receive messages from different senders in a consistent order.
 Building on this MOM primitive is Speculative Paxos, a new protocol for state machine replication designed for an environment where reordering is rare.
@@ -110,6 +123,7 @@ process m at all (because the message is lost). As a result, MOMs can be impleme
 The common intuition behind all of our designs is that messages can be sent along predictable paths through the data center network topology with low latency and high reliability in the common case.
 
 ## Trade-Offs
+
 ## Open Questions and Future Work
 
 
@@ -127,14 +141,3 @@ The common intuition behind all of our designs is that messages can be sent alon
 4. https://huu.la/blog/review-of-farm-fast-remote-memory
 
 
-
-
-
-# Trade-Offs
-Compare the approaches, discuss when they might be appropriate. For example,
-some techniques might only make sense with a lot of data, or in the absence of
-multiple tenants, etc.
-
-# Open Questions and Future Work
-How are the current trends affecting the area, what are some open questions
-about the problem, etc.
