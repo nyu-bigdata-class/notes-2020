@@ -100,9 +100,9 @@ It would be better if the current TCP/IP could be still used which means there i
 # Mostly-ordered multicast
 ## Motivation
 Most of the distributed systems are designed independently from the network. It is suitable for Internet, since it is unpredictable. But lots of today's applications are distributed systems that deployed in data centers, and there are several properties different from Internet:
-1. Data center networks are more predictable.
-2. Data center networks are more reliable.
-3. Data center networks are more extensible.
+1. Data center networks are more predictable: Structured topologies
+2. Data center networks are more reliable: Packet loss is rare.
+3. Data center networks are more extensible: Use of technologies such as software-define dnetworking (SDN) allows flexibility in routing and in-network processing (using VMs or containers) of packets.
 
 So now it is possible to co-design the distributed system and the network. To treat the data center as an approximation of synchronous network, two mechanisms are introduced: Mostly-Ordered Multicast and the Speculative Paxos replication protocol.
 
@@ -113,21 +113,27 @@ Building on this MOM primitive is Speculative Paxos, a new protocol for state ma
 The traditional totaolly-ordered multicast provides the following property: if ni ∈ N processes a multicast message m followed by another multicast message m', then any other node nj ∈ N that receives m' must process m before m'.
 
 Instead here a relaxed version is introduced: mostly-ordered multicast property is if the above ordering constraint is satisfied with high frequency. This permits occasional ordering violations: these occur if ni processes m followed by m' and either (1) nj processes m after m, or (2) nj does not
-process m at all (because the message is lost). As a result, MOMs can be implemented as a best-effort network primitive.
+process m at all (because the message is lost). It means that MOM does not have to hold every case. As a result, MOMs can be implemented as a best-effort network primitive and takes advantage of network properties.
 
-### Design options
+Design options:
 1. Topology-aware multicast: Ensure that all multicast messages traverse the same number of links. This eliminates reordering due to path dilation
 2. High-priority multicast: Use topology-aware multicast, but also assign high QoS priorities to multicasts. This essentially eliminates drops due to congestion, and also reduces reordering due to queuing delays.
 3. In-network serialization: Use high-priority multicast, but route all packets through a single root switch. This eliminates all remaining non-failure related reordering.
 
 The common intuition behind all of our designs is that messages can be sent along predictable paths through the data center network topology with low latency and high reliability in the common case.
 
+Based on MOM, a new replication protocol that relies on the network is introduced: Speculative Paxos is a state machine replication protocol based on the idea of co-designing distributed systems with the datacenter network. It offers excellent performance in environments where replicas receive most requests in the same order. 
+
+
+
 ## Trade-Offs
+
+- Speculative Paxos is slower in confict-heavy environment since speculative operations might need to be rolled back.
+- Speculative Paxos is based on the benefit of MOM that messages are ordering.
 
 ## Open Questions and Future Work
 
-
-
+This paper provides a potentional idea of co-desiging between the distributed system and its underlying network in data center. More designs that synerize the system and network may be considered in the future.
 
 
 
@@ -139,5 +145,8 @@ The common intuition behind all of our designs is that messages can be sent alon
 2. https://www.usenix.org/system/files/atc20-paper166-slides-nam.pdf
 3. https://www.usenix.org/conference/nsdi14/technical-sessions/dragojevi%C4%87
 4. https://huu.la/blog/review-of-farm-fast-remote-memory
+5. https://syslab.cs.washington.edu/research/codesigned-distsys/
+6. https://www.cs.ucr.edu/~krish/CS253/Lecture14-CS253-2020.pdf
+
 
 
